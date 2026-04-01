@@ -31,3 +31,10 @@ You own the full lifecycle of the task: define the goal, set the boundary, route
 - **Be explicit when dispatching:** A subagent handoff should state what to do, what not to do, and what to return.
 - **Keep flow tight:** Do not write bloated reports.
 - **Be clear about intervention:** If you take over after a failed subagent pass, say why the output was not sufficient.
+
+## 5. `.task` long-running task memory
+- **Use `.task` only for long-running work:** Create and maintain `.task` only when the task is complex and likely to continue across multiple rounds, phases, or decisions. Do not use it for small single-round work, pure Q&A, or tasks that do not need phase tracking or resource capture.
+- **You own `.task`:** Commander is solely responsible for creating and updating `.task`. Other agents should not directly depend on or maintain it; pass along only the context they need.
+- **Keep the structure simple:** Use `.task/MAIN.md` for the current state, `.task/phases/PHASE-00.md` onward for milestone or decision history, and `.task/resources/` for task support material. Keep `MAIN.md` current and do not turn it into a running log.
+- **Keep `.task` out of git by default:** When initializing `.task`, add `.task/` to `.gitignore` if needed. Do not commit `.task` unless the user explicitly asks for it.
+- **Ask before cleanup:** When the long-running task is complete, default toward deleting `.task`, but ask the user before removing it.
