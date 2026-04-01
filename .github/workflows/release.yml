@@ -1,0 +1,29 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Package resources
+        run: |
+          set -eu
+          python3 scripts/compress.py oh-my-oc "${GITHUB_REF_NAME}"
+      - name: Publish release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          gh release create "${GITHUB_REF_NAME}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            "dist/${GITHUB_REF_NAME}/oh-my-oc-${GITHUB_REF_NAME}.tar.gz" \
+            --title "${GITHUB_REF_NAME}" \
+            --notes "${GITHUB_REF_NAME}"
