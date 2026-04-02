@@ -25,5 +25,6 @@ jobs:
           gh release create "${GITHUB_REF_NAME}" \
             --repo "${GITHUB_REPOSITORY}" \
             "dist/${GITHUB_REF_NAME}/oh-my-oc-${GITHUB_REF_NAME}.tar.gz" \
+            "dist/${GITHUB_REF_NAME}/oh-my-oc-${GITHUB_REF_NAME}.zip" \
             --title "${GITHUB_REF_NAME}" \
             --notes "${GITHUB_REF_NAME}"

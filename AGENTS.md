@@ -19,5 +19,6 @@ This repository is for personal use. Keep it simple and clean first; avoid over-
 - Release assets should stay predictable and easy to consume remotely.
 - Do not turn this repo into a generic build system.
 - Keep source trees factual and low-maintenance; put cross-repo iteration guidance in `docs/` instead of expanding source payload structure.
+- Keep the `oh-my-oc` release assets parallel across platforms: `.tar.gz` for Unix consumers and `.zip` for Windows consumers.
 - Use `sources/oh-my-oc/` only for content that should enter the `oh-my-oc` release/patch chain.
 - If repo layout or release behavior changes, update this file at the same time.
