@@ -10,7 +10,7 @@ This note explains how `resources` and `oh-my-oc` fit together so iteration work
 ## Release path
 
 - `resources` publishes source payloads.
-- The current release workflow packages `sources/oh-my-oc/` into the `oh-my-oc-<version>.tar.gz` asset.
+- The current release workflow packages `sources/oh-my-oc/` into `oh-my-oc-<version>.tar.gz` for Unix consumers and `oh-my-oc-<version>.zip` for Windows consumers.
 - Content outside `sources/oh-my-oc/` does not automatically become part of the `oh-my-oc` resource release.
 
 ## oh-my-oc consumption path

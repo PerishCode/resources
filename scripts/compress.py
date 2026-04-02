@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import pathlib
 import tarfile
+import zipfile
 
 
 def main() -> None:
@@ -21,11 +22,18 @@ def main() -> None:
     dist_dir = root / "dist" / args.version
     dist_dir.mkdir(parents=True, exist_ok=True)
     tarball = dist_dir / f"{args.source}-{args.version}.tar.gz"
+    zipball = dist_dir / f"{args.source}-{args.version}.zip"
 
     with tarfile.open(tarball, "w:gz") as archive:
         archive.add(source_dir, arcname=args.source)
 
+    with zipfile.ZipFile(zipball, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        for path in source_dir.rglob("*"):
+            if path.is_file():
+                archive.write(path, arcname=path.relative_to(source_dir.parent))
+
     print(tarball)
+    print(zipball)
 
 
 if __name__ == "__main__":
