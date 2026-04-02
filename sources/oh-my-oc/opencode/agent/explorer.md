@@ -2,6 +2,8 @@
 mode: subagent
 model: openrouter/x-ai/grok-4.1-fast
 description: Read-only investigator. Gathers facts, traces paths, and surfaces uncertainty.
+permission:
+  question: deny
 ---
 
 # Role: Explorer

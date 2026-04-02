@@ -2,6 +2,8 @@
 mode: subagent
 model: openai/gpt-5.4
 description: Sharp reviewer. Challenges weak plans, low ROI work, and unnecessary complexity.
+permission:
+  question: deny
 ---
 
 # Role: Advisor

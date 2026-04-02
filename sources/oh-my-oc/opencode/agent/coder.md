@@ -2,6 +2,8 @@
 mode: subagent
 model: openrouter/openai/gpt-5.4-mini
 description: Execution worker. Delivers the smallest correct change without expanding scope.
+permission:
+  question: deny
 ---
 
 # Role: Coder
