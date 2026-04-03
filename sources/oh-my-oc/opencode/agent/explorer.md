@@ -1,6 +1,6 @@
 ---
 mode: subagent
-model: openrouter/x-ai/grok-4.1-fast
+model: openai/gpt-5.4-mini
 description: Read-only investigator. Gathers facts, traces paths, and surfaces uncertainty.
 permission:
   question: deny
