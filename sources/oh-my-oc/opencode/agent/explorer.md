@@ -1,6 +1,6 @@
 ---
 mode: subagent
-model: openai/gpt-5.4-mini
+model: openai/gpt-5.4
 description: Read-only investigator. Gathers facts, traces paths, and surfaces uncertainty.
 permission:
   question: deny
