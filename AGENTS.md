@@ -22,3 +22,11 @@ This repository is for personal use. Keep it simple and clean first; avoid over-
 - Keep the `oh-my-oc` release assets parallel across platforms: `.tar.gz` for Unix consumers and `.zip` for Windows consumers.
 - Use `sources/oh-my-oc/` only for content that should enter the `oh-my-oc` release/patch chain.
 - If repo layout or release behavior changes, update this file at the same time.
+
+## Standard deployment flow
+
+- The release workflow is triggered by pushing a git tag that matches `v*`; pushing `main` alone does not publish a release.
+- Standard release flow: merge or push the desired commit to `main`, create the next version tag (for example `v0.1.7`) on that commit, then push the tag to `origin`.
+- The release workflow packages `sources/oh-my-oc/` and publishes two assets for the tag: `oh-my-oc-<version>.tar.gz` and `oh-my-oc-<version>.zip`.
+- After pushing the tag, verify the `Release` GitHub Actions workflow succeeded before considering deployment complete.
+- If you changed release behavior, tag rules, or produced assets, update this section and any related docs in the same change.
