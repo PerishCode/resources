@@ -11,7 +11,17 @@ This note explains how `resources` and `oh-my-oc` fit together so iteration work
 
 - `resources` publishes source payloads.
 - The current release workflow is manually dispatched with a version and ref, packages `sources/oh-my-oc/` from the selected commit, publishes `oh-my-oc-<version>.tar.gz` for Unix consumers and `oh-my-oc-<version>.zip` for Windows consumers, and creates the matching `v<version>` release tag during publish.
+- The release flow is publish-first: operators choose the version and source ref in the workflow run, the workflow resolves the exact commit snapshot, and the tag is created by the release step instead of being pushed ahead of time.
+- Stable releases are gated to `X.Y.Z` versions that must exceed the current latest stable version.
+- Normal releases are explicitly marked as the repository `latest` release so consumers do not rely on GitHub auto-selection.
 - Content outside `sources/oh-my-oc/` does not automatically become part of the `oh-my-oc` resource release.
+
+## Practical release operations
+
+- Prepare the release commit on `main` first, then run the `Release` workflow instead of creating a local tag.
+- Provide the target release version without the `v` prefix, and use the desired git ref if you need to publish from something other than `main`.
+- Treat the workflow run as the release authority: if it fails, do not backfill the tag manually.
+- After the workflow succeeds, verify the published release assets and resulting `v<version>` tag on GitHub.
 
 ## oh-my-oc consumption path
 
