@@ -28,6 +28,7 @@ This repository is for personal use. Keep it simple and clean first; avoid over-
 - The release workflow is triggered manually with a release version and target ref; pushing `main` alone does not publish a release.
 - Standard release flow: merge or push the desired commit to `main`, then run the `Release` workflow with the next version (for example `0.1.9`) and the ref to publish from.
 - The workflow requires a stable release version in `X.Y.Z` form, rejects versions that do not exceed the current latest release, packages `sources/oh-my-oc/`, publishes two assets, and creates the matching `v<version>` tag from the selected ref as part of the release.
+- Do not create or push release tags manually in the normal flow; the workflow creates the release tag only after packaging and publish succeed.
 - Normal releases are explicitly published as the repository `latest` release.
 - After running the workflow, verify the `Release` GitHub Actions workflow succeeded before considering deployment complete.
 - If you changed release behavior, tag rules, or produced assets, update this section and any related docs in the same change.
