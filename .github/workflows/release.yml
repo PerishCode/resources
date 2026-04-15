@@ -1,9 +1,17 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release version like 0.1.8
+        required: true
+        type: string
+      ref:
+        description: Git ref to release from
+        required: false
+        default: main
+        type: string
 
 permissions:
   contents: write
@@ -13,18 +21,78 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Resolve release metadata
+        id: meta
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -eu
+          sha="$(git rev-parse HEAD)"
+          tag="v${VERSION}"
+          python3 - <<'PY'
+          import os
+          import re
+          import subprocess
+          import sys
+
+          version = os.environ["VERSION"]
+          tag = f"v{version}"
+          repo = os.environ["REPOSITORY"]
+
+          if not re.fullmatch(r"\d+\.\d+\.\d+", version):
+              print(f"invalid release version: {version}", file=sys.stderr)
+              sys.exit(1)
+
+          def run(*args):
+              return subprocess.run(args, check=True, text=True, capture_output=True).stdout.strip()
+
+          existing_tags = [
+              line.rsplit("/", 1)[-1]
+              for line in run("git", "ls-remote", "--tags", "--refs", "origin", "v*").splitlines()
+              if line.strip()
+          ]
+          versions = []
+          for existing_tag in existing_tags:
+              if re.fullmatch(r"v\d+\.\d+\.\d+", existing_tag):
+                  versions.append(tuple(map(int, existing_tag[1:].split("."))))
+
+          current = tuple(map(int, version.split(".")))
+          if versions and current <= max(versions):
+              latest = ".".join(map(str, max(versions)))
+              print(f"release version {version} must be greater than existing latest {latest}", file=sys.stderr)
+              sys.exit(1)
+
+          release_check = subprocess.run(
+              ["gh", "release", "view", tag, "--repo", repo],
+              text=True,
+              capture_output=True,
+          )
+          if release_check.returncode == 0:
+              print(f"release already exists for {tag}", file=sys.stderr)
+              sys.exit(1)
+          PY
+          echo "sha=${sha}" >> "$GITHUB_OUTPUT"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+
       - name: Package resources
         run: |
           set -eu
-          python3 scripts/compress.py oh-my-oc "${GITHUB_REF_NAME}"
+          python3 scripts/compress.py oh-my-oc "${{ steps.meta.outputs.tag }}"
       - name: Publish release asset
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -eu
-          gh release create "${GITHUB_REF_NAME}" \
+          gh release create "${{ steps.meta.outputs.tag }}" \
             --repo "${GITHUB_REPOSITORY}" \
-            "dist/${GITHUB_REF_NAME}/oh-my-oc-${GITHUB_REF_NAME}.tar.gz" \
-            "dist/${GITHUB_REF_NAME}/oh-my-oc-${GITHUB_REF_NAME}.zip" \
-            --title "${GITHUB_REF_NAME}" \
-            --notes "${GITHUB_REF_NAME}"
+            --target "${{ steps.meta.outputs.sha }}" \
+            --latest \
+            "dist/${{ steps.meta.outputs.tag }}/oh-my-oc-${{ steps.meta.outputs.tag }}.tar.gz" \
+            "dist/${{ steps.meta.outputs.tag }}/oh-my-oc-${{ steps.meta.outputs.tag }}.zip" \
+            --title "${{ steps.meta.outputs.tag }}" \
+            --notes "${{ steps.meta.outputs.tag }}"
